@@ -1,0 +1,657 @@
+/* ============================================
+   TEMEL
+   ============================================ */
+* { box-sizing: border-box; }
+
+
+body {
+    overflow: visible !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    margin: 0;
+    padding: 0;
+    background: #ededf5;
+    color: #fff;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+html {
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+
+/* Görsellerde sürükleme ve seçimi engelle */
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Dokunma hedeflerinde zoom engelle */
+.product-card,
+.category-chip,
+.lang-tab,
+.nav-arrow,
+.modal-close-btn {
+    touch-action: manipulation;
+}
+
+/* ============================================
+   HEADER (logo + dil seçenekleri)
+   ============================================ */
+.app-header {
+    background: #061428;
+    padding: 12px 16px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header-top {
+    display: flex;
+    justify-content: center;
+}
+
+.lang-tabs {
+    display: inline-flex;
+    background: #0f2a52;
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.lang-tab {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    font-family: inherit;
+}
+
+.lang-tab:hover {
+    color: #fff;
+}
+
+.lang-tab.active {
+    background: #c9a961;
+    color: #000;
+}
+
+.header-title {
+    text-align: center;
+}
+
+.header-title h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 3px;
+    color: #c9a961;
+    text-transform: uppercase;
+}
+
+.header-title .subtitle {
+    font-size: 0.75rem;
+    color: #8fa8c9;
+    margin: 4px 0 0;
+    font-style: italic;
+}
+
+/* ============================================
+   KATEGORİ ŞERİDİ (sticky-header içinde)
+   ============================================ */
+.category-bar {
+    position: sticky;              /* ← SABİT */
+    top: 0;                         /* ← en üste yapış */
+    z-index: 999;
+    background: #061428;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.category-bar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Kategori chip (ana) */
+.category-chip {
+    flex-shrink: 0;
+    background: #0f2a52;
+    color: #b8c9e0;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+}
+
+.category-chip:hover {
+    background: #153d7a;
+    color: #fff;
+}
+
+.category-chip.active {
+    background: #c9a961;
+    color: #000;
+    font-weight: bold;
+}
+
+/* "Tümü" chip */
+.category-chip-all {
+    background: #c9a961;
+    color: #000;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.category-chip-all.active {
+    background: #e5c47d;
+}
+
+.category-chip-all i {
+    font-size: 0.85rem;
+}
+
+/* Alt kategori chip */
+.category-chip-sub {
+    background: #0a1e3f;
+    color: #8fa8c9;
+    border: 1px dashed rgba(201, 169, 97, 0.35);
+    font-size: 0.78rem;
+    padding: 7px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.category-chip-sub:hover {
+    background: #153d7a;
+    color: #fff;
+    border-color: rgba(201, 169, 97, 0.7);
+}
+
+.category-chip-sub.active {
+    background: #c9a961;
+    color: #000;
+    border-color: #c9a961;
+    border-style: solid;
+}
+
+.category-chip-sub .sub-parent {
+    opacity: 0.6;
+    font-size: 0.7rem;
+}
+
+.category-chip-sub .sub-sep {
+    opacity: 0.4;
+    font-size: 0.65rem;
+}
+
+.category-chip-sub .sub-name {
+    font-weight: bold;
+}
+
+.category-chip-sub.active .sub-parent {
+    opacity: 0.75;
+    color: #000;
+}
+
+/* ============================================
+   YEMEK LİSTESİ - 2 SÜTUN
+   ============================================ */
+.products-container {
+    padding: 12px;
+}
+
+/* ============================================
+   YEMEK LİSTESİ - CİHAZA GÖRE OPTİMİZE
+   ============================================ */
+
+/* 1. Telefon (varsayılan): 2 sütun */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+/* 2. Büyük telefon / küçük tablet (yatay telefon): 3 sütun */
+@media (min-width: 600px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+}
+
+/* 3. TABLET: 3 sütun - dokunmatik için geniş kartlar */
+@media (min-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+}
+
+/* 4. TABLET YATAY / küçük masaüstü: 4 sütun */
+@media (min-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+}
+
+/* 5. Büyük masaüstü: 4 sütun (aynı kalır, sadece boşluk artar) */
+@media (min-width: 1400px) {
+    .products-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+}
+
+/* ============================================
+   YEMEK KARTI
+   ============================================ */
+.product-card {
+    background: #0f2a52;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+}
+
+.product-card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    background: #061428;
+}
+
+.product-info {
+    padding: 10px 12px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0 0 6px;
+    color: #fff;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.3rem;
+}
+
+.product-desc {
+    font-size: 0.72rem;
+    color: #a8b8d0;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 1.9rem;
+    flex: 1;
+}
+
+.product-price {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #c9a961;
+    margin: 0;
+    text-align: right;
+}
+
+/* ============================================
+   YEMEK DETAY MODAL
+   ============================================ */
+.meal-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 20, 40, 0.95);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.meal-modal .modal-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Üst bar (sayaç + kapat) */
+.modal-topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.modal-topbar > * {
+    pointer-events: auto;
+}
+
+.nav-counter {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 6px 14px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+}
+
+.modal-close-btn {
+    width: 42px;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    user-select: none;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Resim alanı */
+.modal-image-container {
+    width: 100%;
+    height: 55%;
+    flex-shrink: 0;
+    background: #061428;
+    position: relative;
+}
+
+.modal-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Ok butonları */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+}
+
+.nav-arrow-left {
+    left: 12px;
+    animation: arrowLeftPulse 2.5s ease-in-out infinite;
+}
+
+.nav-arrow-right {
+    right: 12px;
+    animation: arrowRightPulse 2.5s ease-in-out infinite;
+}
+
+.nav-arrow:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-arrow:active {
+    transform: translateY(-50%) scale(0.88);
+    background: rgba(201, 169, 97, 0.8);
+    border-color: #c9a961;
+    animation: none;
+}
+
+.nav-arrow:disabled,
+.nav-arrow.disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    pointer-events: none;
+    animation: none;
+}
+
+.nav-arrow i {
+    pointer-events: none;
+    line-height: 1;
+}
+
+/* Ok animasyonları */
+@keyframes arrowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3); }
+    50%      { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+}
+
+@keyframes arrowLeftPulse {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50%      { transform: translateY(-50%) translateX(-4px); }
+}
+
+@keyframes arrowRightPulse {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50%      { transform: translateY(-50%) translateX(4px); }
+}
+
+/* Fotoğraf notu */
+.photo-note {
+    background: #061428;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.72rem;
+    font-style: italic;
+    text-align: center;
+    padding: 6px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+/* Modal bilgi alanı */
+.modal-info-container {
+    flex: 1;
+    background: #0a1e3f;
+    color: #fff;
+    padding: 24px 20px;
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-meal-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #c9a961;
+    margin: 0 0 12px;
+}
+
+#modal-meal-description {
+    font-size: 0.95rem;
+    color: #bbb;
+    margin: 0 0 18px;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+#modal-meal-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #c9a961;
+}
+
+/* ============================================
+   MOBİL UYUM
+   ============================================ */
+@media (max-width: 576px) {
+    .nav-arrow {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+    .nav-arrow-left  { left: 8px; }
+    .nav-arrow-right { right: 8px; }
+}
+
+@media (max-width: 400px) {
+    .header-title h1 { font-size: 1.3rem; }
+    .header-title .subtitle { font-size: 0.68rem; }
+    .category-chip { padding: 6px 14px; font-size: 0.75rem; }
+    .product-name { font-size: 0.82rem; }
+    .product-desc { font-size: 0.68rem; }
+    .product-price { font-size: 0.85rem; }
+    #modal-meal-name { font-size: 1.3rem; }
+    .nav-arrow { width: 34px; height: 34px; font-size: 1rem; }
+}
+
+/* ============================================
+   ARAMA KUTUSU
+   ============================================ */
+.search-box {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 10px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8fa8c9;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    background: #0f2a52;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 10px 40px 10px 38px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.search-input::placeholder {
+    color: #7a91b0;
+}
+
+.search-input:focus {
+    border-color: #c9a961;
+    background: #123058;
+}
+
+.search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.search-clear:hover {
+    background: rgba(201, 169, 97, 0.6);
+}
+
+.search-clear i {
+    pointer-events: none;
+}
+
+/* ============================================
+   LOGO
+   ============================================ */
+.giotto-logo {
+    height: 45px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    filter: brightness(0) invert(1);  /* Siyah logoyu beyaza çevirir */
+}

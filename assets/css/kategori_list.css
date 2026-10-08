@@ -1,0 +1,50 @@
+/* Stil kodunuz değişmedi */
+.list-group.category-list-root {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.list-group-item {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.list-group-item.main-category-item {
+    background-color: #e9ecef;
+    font-weight: bold;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.list-group-item.sub-category-item {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.list-group-submenu {
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+    background-color: #ffffff;
+}
+
+.category-toggle-link {
+    text-decoration: none;
+    color: inherit;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.category-toggle-icon {
+    transition: transform 0.2s ease-in-out;
+    margin-right: 5px;
+}
+
+.category-toggle-icon.rotated {
+    transform: rotate(90deg);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}

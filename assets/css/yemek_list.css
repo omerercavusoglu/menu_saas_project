@@ -1,0 +1,97 @@
+    /* Mevcut stiller (değişmeyenler) */
+    /*.container-fluid { padding-top: 20px; padding-left: 15px; padding-right: 15px; }*/
+    .category-list-root { border: 1px solid #dee2e6; border-radius: 0.25rem; overflow: hidden; margin-bottom: 20px; }
+    .list-group-submenu { padding-left: 0; list-style: none; margin-bottom: 0; border-top: 1px solid #dee2e6; }
+    .list-group-item { cursor: pointer; background-color: #fff; border-bottom: 1px solid rgba(0,0,0,.125); transition: background-color 0.2s ease; padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .list-group-item:last-child { border-bottom: none; }
+    .list-group-item:hover { background-color: #f8f9fa; }
+    .list-group-item.meal-category-header,
+    .list-group-item.meal-category-header-no-sub { background-color: #e9ecef; font-weight: bold; border-bottom: 1px solid #dee2e6; }
+    .list-group-item.meal-item { background-color: #ffffff; border-bottom: 1px dashed #e9ecef; font-size: 0.95em; display: flex; justify-content: space-between; align-items: center; }
+    .list-group-item.meal-item:hover { background-color: #f2f2f2; }
+    .list-group-item.meal-item:last-child { border-bottom: none; }
+    .category-toggle-link { text-decoration: none; color: inherit; flex-grow: 1; display: flex; align-items: center; }
+    .category-toggle-icon { transition: transform 0.2s ease-in-out; margin-right: 8px; }
+    .category-toggle-icon.rotated { transform: rotate(90deg); }
+    .meal-thumbnail { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
+    .meal-info {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
+    .meal-actions { flex-shrink: 0; white-space: nowrap; }
+    .meal-price-input { text-align: right; }
+    .btn-sm { padding: .25rem .5rem; font-size: .75rem; line-height: 1.5; border-radius: .2rem; }
+    .me-1 { margin-right: .25rem !important; }
+    .ms-2 { margin-left: .5rem !important; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* YENİ VE GÜNCELLENMİŞ STILLER: iOS Tarzı Toggle için */
+
+    /* Genel toggle konteyneri */
+    .toggle.btn {
+        min-width: 50px; /* Daha küçük bir genişlik, metin olmadan daha iyi durur */
+        height: 25px; /* Yüksekliği düşürdük */
+        border-radius: 18px; /* Daha oval köşeler */
+        padding: 0;
+        margin: 0;
+        border: none; /* Kenarlık yok */
+        background-color: #e0e0e0; /* Pasifken varsayılan gri */
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    /* Toggle'ın handle (tutma yeri) */
+    .toggle-handle {
+        width: 22px; /* Dairesel görünüm için genişlik ve yükseklik eşit */
+        height: 22px;
+        border-radius: 50% !important; /* Tamamen yuvarlak */
+        background-color: #ffffff !important; /* Beyaz top */
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Hafif gölge */
+        position: absolute;
+        top: 1.5px; /* Dikeyde ortala */
+        left: 2px; /* Sol tarafa yaklaştır */
+        transition: left 0.2s ease-in-out;
+        border: none !important; /* Varsayılan Bootstrap Toggle border'ı kaldır */
+    }
+
+    /* Toggle Aktif Durumda (Arka Plan ve Handle Konumu) */
+    .toggle.btn-success {
+        background-color: #4cd964 !important; /* iOS yeşili */
+    }
+    .toggle.btn-success .toggle-handle {
+        left: calc(100% - 24px) !important; /* Sağ kenara taşı, (genişlik - handle genişliği - sol padding) */
+    }
+
+    /* Toggle Pasif Durumda (Arka Plan ve Handle Konumu) */
+    .toggle.btn-danger { /* data-offstyle="danger" olduğu için bu sınıf uygulanır */
+        background-color: #e0e0e0 !important; /* Daha açık gri */
+    }
+    .toggle.btn-danger .toggle-handle {
+        left: 2px !important; /* Sol tarafa konumlandır */
+    }
+
+    /* Toggle Metinleri (ON/OFF) Gizle */
+    .toggle-on, .toggle-off {
+        display: none !important; /* Metinleri tamamen gizle */
+    }
+
+    /* Boyutlandırma ayarları (sm boyutu için) */
+    .toggle.btn-sm {
+        min-width: 50px; /* Genel boyutu küçültmek için */
+        height: 25px;
+    }
+    .toggle.btn-sm .toggle-handle {
+        width: 22px;
+        height: 22px;
+        top: 1.5px;
+        left: 2px;
+    }
+    .toggle.btn-sm.btn-success .toggle-handle {
+        left: calc(100% - 24px) !important;
+    }
+    /* Aktif/Pasif toggle'ın diğer elementlerle hizalanması için */
+    .meal-status-toggle.me-2 {
+        margin-right: 1rem !important; /* Buton ile yemek thumbnail/text arasına boşluk */
+    }

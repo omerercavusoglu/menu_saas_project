@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Сканер заказов</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           KAMERA EKRANI
+           ============================================ */
+        #scanner-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .scanner-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .scanner-header h1 {
+            color: #c9a961;
+            font-size: 1.4rem;
+            margin: 0 0 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .scanner-header p {
+            color: #888;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .camera-container {
+            flex: 1;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #111;
+            margin-bottom: 16px;
+        }
+
+        #camera-view {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Köşe çerçeveleri */
+        .scan-corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #c9a961;
+        }
+        .scan-corner.tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .scan-corner.tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .scan-corner.bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .scan-corner.br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        .scanner-hint {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            padding: 8px;
+        }
+
+        /* ============================================
+           LİSTE EKRANI
+           ============================================ */
+        #order-screen {
+            display: none;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .order-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .order-header {
+            background: #c9a961;
+            color: #000;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .order-header .label {
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .order-header .time {
+            font-size: 0.85rem;
+            opacity: 0.75;
+            margin-top: 4px;
+        }
+
+        h3 {
+            color: #c9a961;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 16px;
+        }
+
+        .item {
+            background: #1a1a1a;
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-left: 4px solid #c9a961;
+        }
+
+        .item-qty {
+            background: #c9a961;
+            color: #000;
+            min-width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .item-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .new-qr-btn {
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            padding: 20px;
+            background: #c9a961;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .new-qr-btn:hover {
+            background: #e5c47d;
+            transform: translateY(-2px);
+        }
+
+        .new-qr-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .footer {
+            text-align: center;
+            color: #444;
+            font-size: 0.75rem;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        /* Kamera izni hatası */
+        .camera-error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #ef4444;
+        }
+
+        .camera-error button {
+            margin-top: 20px;
+            padding: 14px 28px;
+            background: #c9a961;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     EKRAN 1: KAMERA / QR OKUYUCU
+     ============================================ -->
+<div id="scanner-screen">
+    <div class="scanner-header">
+        <h1>📷 Сканер заказов</h1>
+        <p>Наведите камеру на QR-код клиента</p>
+    </div>
+
+    <div class="camera-container">
+        <video id="camera-view" autoplay playsinline muted></video>
+        <div class="scan-corner tl"></div>
+        <div class="scan-corner tr"></div>
+        <div class="scan-corner bl"></div>
+        <div class="scan-corner br"></div>
+    </div>
+
+    <div class="scanner-hint">
+        Giotto Menu · Официант
+    </div>
+</div>
+
+<!-- ============================================
+     EKRAN 2: SİPARİŞ LİSTESİ
+     ============================================ -->
+<div id="order-screen">
+    <div class="order-container">
+        <div id="order-content">
+            <!-- JS ile doldurulacak -->
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     QR OKUYUCU KÜTÜPHANESİ
+     ============================================ -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+/* ==========================================
+   DURUM
+   ========================================== */
+let currentStream = null;
+let isScanning = false;
+
+/* ==========================================
+   KAMERA BAŞLAT
+   ========================================== */
+async function startCamera() {
+    const video = document.getElementById('camera-view');
+
+    try {
+        // Önce arka kamerayı dene
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: 'environment' },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        });
+
+        currentStream = stream;
+        video.srcObject = stream;
+        await video.play();
+
+        isScanning = true;
+        requestAnimationFrame(scanFrame);
+
+    } catch (err) {
+        console.error('Kamera hatası:', err);
+        showCameraError();
+    }
+}
+
+/* ==========================================
+   KAMERA DURDUR
+   ========================================== */
+function stopCamera() {
+    isScanning = false;
+
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+    }
+
+    const video = document.getElementById('camera-view');
+    video.srcObject = null;
+}
+
+/* ==========================================
+   QR TARAMA DÖNGÜSÜ
+   ========================================== */
+function scanFrame() {
+    if (!isScanning) return;
+
+    const video = document.getElementById('camera-view');
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        // Canvas oluştur (gizli)
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Piksel verisini al
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // jsQR ile tara
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: 'dontInvert'
+        });
+
+        if (code && code.data) {
+            handleQRCode(code.data);
+            return; // Taramayı durdur
+        }
+    }
+
+    requestAnimationFrame(scanFrame);
+}
+
+/* ==========================================
+   QR KOD BULUNDU
+   ========================================== */
+function handleQRCode(data) {
+    stopCamera();
+
+    // Titreşim (destekleniyorsa)
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
+
+    // URL'den veriyi çek
+    let encoded = null;
+
+    // Hash formatı: ...#d=BASE64
+    if (data.includes('#d=')) {
+        encoded = data.split('#d=')[1];
+    } 
+    // Tam URL değilse direkt base64 olabilir
+    else if (!data.includes('://')) {
+        encoded = data;
+    }
+
+    if (!encoded) {
+        showError('Некорректный QR код');
+        return;
+    }
+
+    try {
+        const json = decodeURIComponent(escape(atob(encoded)));
+        const orderData = JSON.parse(json);
+        showOrder(orderData);
+    } catch (e) {
+        console.error('Parse error:', e);
+        showError('Ошибка чтения QR');
+    }
+}
+
+/* ==========================================
+   SİPARİŞİ GÖSTER
+   ========================================== */
+function showOrder(data) {
+    const items = data.i || [];
+    const time = data.ts ? new Date(data.ts * 1000) : new Date();
+    const timeStr = time.getHours().toString().padStart(2, '0') + ':' +
+                    time.getMinutes().toString().padStart(2, '0');
+
+    // Ekranları değiştir
+    document.getElementById('scanner-screen').style.display = 'none';
+    document.getElementById('order-screen').style.display = 'block';
+
+    if (items.length === 0) {
+        document.getElementById('order-content').innerHTML = `
+            <div style="text-align:center;padding:60px 20px;color:#666;">
+                <div style="font-size:3rem;margin-bottom:20px;">📭</div>
+                <p>Пустой список</p>
+            </div>
+        `;
+        return;
+    }
+
+    let itemsHtml = '';
+    items.forEach(item => {
+        itemsHtml += `
+            <div class="item">
+                <div class="item-qty">${item.q || 1}</div>
+                <div class="item-name">${escapeHtml(item.n || '')}</div>
+            </div>
+        `;
+    });
+
+    document.getElementById('order-content').innerHTML = `
+        <div class="order-header">
+            <div class="label">Заказ</div>
+            <div class="time">${timeStr}</div>
+        </div>
+
+        <h3>🍽️ Блюда (${items.length})</h3>
+
+        ${itemsHtml}
+
+        <button class="new-qr-btn" onclick="restartScanner()">
+            📷 Сканировать новый QR
+        </button>
+
+        <div class="footer">
+            Giotto Menu · ${timeStr}
+        </div>
+    `;
+}
+
+/* ==========================================
+   HATA GÖSTER
+   ========================================== */
+function showError(message) {
+    document.getElementById('scanner-screen').style.display = 'none';
+    document.getElementById('order-screen').style.display = 'block';
+
+    document.getElementById('order-content').innerHTML = `
+        <div style="text-align:center;padding:60px 20px;color:#ef4444;">
+            <div style="font-size:3rem;margin-bottom:20px;">❌</div>
+            <p style="font-size:1.1rem;">${escapeHtml(message)}</p>
+            <button class="new-qr-btn" onclick="restartScanner()" style="margin-top:30px;">
+                📷 Попробовать снова
+            </button>
+        </div>
+    `;
+}
+
+/* ==========================================
+   YENİ QR TARA
+   ========================================== */
+function restartScanner() {
+    document.getElementById('scanner-screen').style.display = 'flex';
+    document.getElementById('order-screen').style.display = 'none';
+    document.getElementById('order-content').innerHTML = '';
+    startCamera();
+}
+
+/* ==========================================
+   KAMERA İZNİ HATASI
+   ========================================== */
+function showCameraError() {
+    document.getElementById('scanner-screen').innerHTML = `
+        <div class="camera-error">
+            <div style="font-size:4rem;margin-bottom:20px;">📷</div>
+            <h2>Нет доступа к камере</h2>
+            <p>Разрешите доступ к камере в настройках браузера</p>
+            <button onclick="startCamera()">Попробовать снова</button>
+        </div>
+    `;
+}
+
+/* ==========================================
+   HTML ESCAPE
+   ========================================== */
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+/* ==========================================
+   SAYFA AÇILINCA
+   ========================================== */
+window.addEventListener('load', () => {
+    startCamera();
+});
+
+/* ==========================================
+   SAYFA KAPANINCA KAMERAYI DURDUR
+   ========================================== */
+window.addEventListener('beforeunload', () => {
+    stopCamera();
+});
+</script>
+</body>
+</html>
