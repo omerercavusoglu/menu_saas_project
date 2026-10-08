@@ -4,7 +4,7 @@
 
 $host    = 'localhost';
 
-$db      = 'menugiot_sheva';
+$db      = 'localhost';
 
 $user    = 'root';
 
